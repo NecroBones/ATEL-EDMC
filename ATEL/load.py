@@ -54,6 +54,8 @@ def plugin_app(parent):
 
 def journal_entry(cmdr, is_beta, system, station, entry, state):
 
+def journal_entry(cmdr, is_beta, system, station, entry, state):
+
     if entry['event'] == 'CodexEntry':
         # Define variables to be passed along to submit ATEL Function
         this.timestamp=(format(entry['timestamp']))
@@ -66,17 +68,20 @@ def journal_entry(cmdr, is_beta, system, station, entry, state):
         this.name_localised=(format(entry['Name_Localised']))
         this.system=(format(entry['System']))
         this.systemaddress=(format(entry['SystemAddress']))
-        # do this the old fashioned way (version 1.08) with artisinal, hand-crafted JSON BS.
-        CODEX_DATA = '{{ "timestamp":"{}", "EntryID":"{}", "Name":"{}", "Name_Localised":"{}", "System":"{}", "SystemAddress":"{}", "App_Name":"{}", "App_Version":"{}"}}'.format(entry['timestamp'], entry['EntryID'], this.name_lower, entry['Name_Localised'], entry['System'], entry['SystemAddress'], this.app_name, this.installed_version,)
-        API_POST = requests.post(url = this.api, data = CODEX_DATA)
-        # ATEL Button disabled in release 1.29
-        this.status.set("Codex discovery data sent.\n "+this.name)
-        # The print statements below can be uncommented to debug data transmission issues.
-        # Log file located at: \user_name\AppData\Local\Temp\EDMarketConnector.log
-        #print(str(this.api))
-        #print(str(CODEX_DATA))
-        #print(str(API_POST.request.body))
-        #print(str(API_POST.text))
+
+        try:
+            this.voucher=(format(entry['VoucherAmount']))
+            CODEX_DATA = '{{ "timestamp":"{}", "EntryID":"{}", "Name":"{}", "Name_Localised":"{}", "System":"{}", "SystemAddress":"{}", "App_Name":"{}", "App_Version":"{}"}}'.format(entry['timestamp'], entry['EntryID'], this.name_lower, entry['Name_Localised'], entry['System'], entry['SystemAddress'], this.app_name, this.installed_version,)
+            API_POST = requests.post(url = this.api, data = CODEX_DATA)
+            this.status.set("Codex discovery data sent.\n "+this.name_localised)
+            # The print statements below can be uncommented to debug data transmission issues.
+            # Log file located at: \user_name\AppData\Local\Temp\EDMarketConnector.log
+            #print(str(this.api))
+            #print(str(CODEX_DATA))
+            #print(str(API_POST.request.body))
+            #print(str(API_POST.text))
+        except KeyError:
+            this.status.set("Waiting for Codex discovery data...")
     else:
         # FSDJump happens often enough to clear the status window
         if entry['event'] == 'FSDJump':
