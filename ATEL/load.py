@@ -54,8 +54,6 @@ def plugin_app(parent):
 
 def journal_entry(cmdr, is_beta, system, station, entry, state):
 
-def journal_entry(cmdr, is_beta, system, station, entry, state):
-
     if entry['event'] == 'CodexEntry':
         # Define variables to be passed along to submit ATEL Function
         this.timestamp=(format(entry['timestamp']))
