@@ -5,7 +5,6 @@
 #
 # Version 1.29 is no longer maintained.
 # Please upgrade to EDMarketConnector 3.50 and ATEL-EDMC version 1.3x
-#
 ###############################################################################
 
 import sys
@@ -34,8 +33,6 @@ def plugin_start(plugin_dir):
 def plugin_prefs(parent, cmdr, is_beta):
     frame = nb.Frame(parent)
     frame.columnconfigure(5, weight=1)
-    nb.Label(frame, text="This release of ATEL-EDMC is no longer supported.").grid(columnspan=2, padx=PADX, sticky=tk.W)
-    nb.label(frame, text="Please upgrade to EDMC 3.50 and ATEL-EDMC 1.3x.").grid(columnspan=2, padx=PADX, sticky=tk.W)
     HyperlinkLabel(frame, text='EDMC GitHub', background=nb.Label().cget('background'), url='https://github.com/Marginal/EDMarketConnector/releases\n', underline=True).grid(padx=PADX, sticky=tk.W)
     HyperlinkLabel(frame, text='ATEL-EDMC GitHub', background=nb.Label().cget('background'), url='https://github.com/Elite-IGAU/ATEL-EDMC/releases\n', underline=True).grid(padx=PADX, sticky=tk.W)
     return frame
@@ -72,12 +69,6 @@ def journal_entry(cmdr, is_beta, system, station, entry, state):
             CODEX_DATA = '{{ "timestamp":"{}", "EntryID":"{}", "Name":"{}", "Name_Localised":"{}", "System":"{}", "SystemAddress":"{}", "App_Name":"{}", "App_Version":"{}"}}'.format(entry['timestamp'], entry['EntryID'], this.name_lower, entry['Name_Localised'], entry['System'], entry['SystemAddress'], this.app_name, this.installed_version,)
             API_POST = requests.post(url = this.api, data = CODEX_DATA)
             this.status.set("Codex discovery data sent.\n "+this.name_localised)
-            # The print statements below can be uncommented to debug data transmission issues.
-            # Log file located at: \user_name\AppData\Local\Temp\EDMarketConnector.log
-            #print(str(this.api))
-            #print(str(CODEX_DATA))
-            #print(str(API_POST.request.body))
-            #print(str(API_POST.text))
         except KeyError:
             this.status.set("Waiting for Codex discovery data...")
     else:
