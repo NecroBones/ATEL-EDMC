@@ -40,6 +40,10 @@ this.github_latest_version = "https://raw.githubusercontent.com/Elite-IGAU/ATEL-
 this.plugin_source = "https://raw.githubusercontent.com/Elite-IGAU/ATEL-EDMC/latest/ATEL/load.py"
 this.api = "https://ddss70885k.execute-api.us-west-1.amazonaws.com/Prod"
 PADX = 10  # formatting
+this.edastro_get = "https://edastro.com/api/accepting"
+this.edastro_push = "http://edastro.com/api/journal"
+this.edastro_epoch = 0
+this.edastro_dict = {}
 
 def plugin_start3(plugin_dir):
     check_version()
@@ -108,6 +112,19 @@ def plugin_app(parent):
 
 def journal_entry(cmdr, is_beta, system, station, entry, state):
 
+    if time.time() - this.edastro_epoch > 600:
+        this.edastro_epoch = time.time()
+        event_list = json.loads(requests.get(url = this.edastro_get))
+        this.edastro_dict = dict.fromkeys(event_list,1)
+        
+    if edastro_dict[entry['event']] == 1:
+        EVENT_DATA = '[{{"appName":"{}","appVersion":"{}"}},{}]'.format(this.app_name, this.installed_version, json.dumps(entry))
+        try:
+            API_POST = requests.post(url = this.edastro_push, data = EVENT_DATA)
+            this.status.set("EDAstro data sent!\n")
+        except KeyError:
+            this.status.set("Waiting for Event data...")
+            
     if entry['event'] == 'CodexEntry':
         this.timestamp=(format(entry['timestamp']))
         this.cmdr = cmdr
